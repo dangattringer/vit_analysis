@@ -130,7 +130,7 @@ def extra_cache(args, mod_id, results, analysis_methods):
 
 
 
-def run_metrics(args):
+def run_metrics(args, just_head=False):
     # prepare dir
     mod_wrap = get_model_wrapper(args.meta_model, args.arch, args.patch, args.imsize, 'attn')
     mod_id = mod_wrap.mod_id
@@ -144,6 +144,12 @@ def run_metrics(args):
     head_methods = ['avg-att-dist', 'spatial-cls-att', 'stdev-over-token-pos']
     token_methods = ['avg-att-on-token', 'avg-spc-att-on-token', 'avg-spcpure-att-on-token', 'avg-cls-att-on-token', 'avg-aligned-att-on-token']
     perclass_token_methods = []
+
+    if just_head:
+        block_methods = []
+        head_methods = ['avg-att-dist']
+        token_methods = []
+        perclass_token_methods = []
 
     # RETIRED METRICS
     # block_methods = []
@@ -349,9 +355,12 @@ def run_meta_analysis(args):
 # spatial token attention maps
 # NOTE - in "diagonal" mode, will sample all spatial tokens along the
 # top left to bottom right diagonal
-def select_positions(tok_h, tok_w, diag=False):
+def select_positions(tok_h, tok_w, diag=False, just_cls=False):
     if not diag:
-        pos_names = ['cls', 'top', 'left', 'center', 'right', 'bottom', 'spcagg']
+        if just_cls:
+            pos_names = ['cls']
+        else:
+            pos_names = ['cls', 'top', 'left', 'center', 'right', 'bottom', 'spcagg']
         if tok_h % 2 == 0:
             mid_h = int(tok_h/2)
         else:
@@ -375,9 +384,7 @@ def select_positions(tok_h, tok_w, diag=False):
             pos_names.append('diag%02i'%i)
     return positions, pos_names
 
-
-
-def export_attention_maps(args):
+def export_attention_maps(args, just_cls=False):
     t0 = time.time()
     mod_wrap = get_model_wrapper(args.meta_model, args.arch, args.patch, args.imsize, 'attn')
     mod_wrap.load()
@@ -385,11 +392,15 @@ def export_attention_maps(args):
     dump_dir = os.path.join(args.vis_dump, mod_id)
     tok_h = int(args.imsize/args.patch)
     tok_w = int(args.imsize/args.patch)
-    positions, pos_names = select_positions(tok_h, tok_w)
+    positions, pos_names = select_positions(tok_h, tok_w, just_cls=just_cls)
     print('exporting attention maps to: ' + dump_dir)
     os.makedirs(dump_dir, exist_ok=True)
     print('loading image from: ' + args.vis_in)
-    image_list = os.listdir(args.vis_in)
+    if os.path.isfile(args.vis_in):
+        image_list = [os.path.basename(args.vis_in)]
+        args.vis_in = os.path.dirname(args.vis_in)
+    else:
+        image_list = os.listdir(args.vis_in)
     print('found %i images'%len(image_list))
     for imgf in image_list:
         print(imgf)
@@ -412,6 +423,8 @@ def export_attention_maps(args):
             attns = attns.astype(np.float32)
         nblks = attns.shape[1]
         nheads = attns.shape[2]
+        if just_cls:
+            positions = positions[:1]
         # export images
         for b in range(nblks):
             print('  block %i'%b)
@@ -442,7 +455,7 @@ def get_attn_img(attns, orig_size, blk, head, pidx, tok_h, tok_w):
 
 
 
-def make_attention_grids(args):
+def make_attention_grids(args, just_cls=False):
     mod_wrap = get_model_wrapper(args.meta_model, args.arch, args.patch, args.imsize, 'attn')
     mod_id = mod_wrap.mod_id
     dump_dir = os.path.join(args.vis_dump, mod_id)
@@ -456,12 +469,15 @@ def make_attention_grids(args):
     out_hp = os.path.join(output_dir, 'head-v-pos')
     image_list = os.listdir(args.vis_in)
     for img in image_list:
-        # pos vs block
-        make_supergrid(dump_dir, out_pb, xaxis='pos', yaxis='blk', use_all='head', img=img, mod_id=mod_id)
-        # head vs pos
-        make_supergrid(dump_dir, out_hp, xaxis='head', yaxis='pos', use_all='blk', img=img, mod_id=mod_id)
-        # head vs block
-        make_supergrid(dump_dir, out_hp, xaxis='head', yaxis='blk', use_all='pos', img=img, mod_id=mod_id)
+        if just_cls:
+            make_supergrid(dump_dir, out_hp, xaxis='head', yaxis='blk', use_all='pos', img=img, mod_id=mod_id)
+        else:
+            # pos vs block
+            make_supergrid(dump_dir, out_pb, xaxis='pos', yaxis='blk', use_all='head', img=img, mod_id=mod_id)
+            # head vs pos
+            make_supergrid(dump_dir, out_hp, xaxis='head', yaxis='pos', use_all='blk', img=img, mod_id=mod_id)
+            # head vs block
+            make_supergrid(dump_dir, out_hp, xaxis='head', yaxis='blk', use_all='pos', img=img, mod_id=mod_id)
 
 
 
@@ -502,7 +518,7 @@ def parse_args():
     parser.add_argument('--perclass', type=int, default=100, help='number of samples per class to load with Imagenet50')
     parser.add_argument('--batch', type=int, default=2)
     ######### MODEL
-    parser.add_argument('--meta_model', default='dino', choices=['dino', 'clip', 'mae', 'timm', 'moco', 'beit'], help='style of model to load')
+    parser.add_argument('--meta_model', default='dino', choices=['dino', 'clip', 'mae', 'mae_reimpl', 'mae_ct', 'mae_ct_aug', 'timm', 'moco', 'beit'], help='style of model to load')
     parser.add_argument('--arch', default='B', type=str, choices=['T', 'S', 'B', 'L', 'H'], help='size of vit to load')
     parser.add_argument('--patch', default=16, type=int, help='vit patch size')
     parser.add_argument('--imsize', default=224, type=int, help='image resize size')

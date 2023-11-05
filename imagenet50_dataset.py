@@ -38,7 +38,8 @@ def find_classes(directory: str) -> Tuple[List[str], Dict[str, int]]:
     See :class:`DatasetFolder` for details.
     """
     class_list = []
-    with open('data/imagenet_50.txt', 'r') as f:
+    # with open('data/imagenet_50.txt', 'r') as f:
+    with open(os.path.join(os.path.dirname(directory), 'imagenet_50.txt'), 'r') as f:
         for line in f:
             class_list.append(line.strip().split()[0])
     classes = sorted(class_list)

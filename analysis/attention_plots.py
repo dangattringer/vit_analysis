@@ -72,8 +72,19 @@ def head_level_plots(output_dir, mod_id, all_img_res, a_m, fs=20, sub_sel=None, 
         else:
             mp = np.max(m, axis=1)
         x = np.arange(0, mp.shape[0])
+        tmp_mod_id = mod_id.split('-')
+        if tmp_mod_id[1] in ["CT", "REIMPL"]:
+            tmp_mod_id = mod_id.rsplit('-', 3)[0]
+        else:
+            tmp_mod_id = tmp_mod_id[0]
+
+        col, mrk, lst = get_line_fmt(tmp_mod_id)
         fig = plt.figure(figsize=[9,6])
-        plt.plot(x, mp, marker='.', markersize=20)
+        line = plt.plot(x, mp, markersize=20, marker=mrk, color=col, linestyle=lst)
+        if pm == 'AVG' and a_m == 'avg-att-dist':
+            for b in range(m.shape[1]):
+                y_m = m[:, b]
+                plt.scatter(x, y_m, marker=mrk, color=col)
         plt.xlabel('Block')
         plt.ylabel(a_m + ' [%s-OVER-HEADS]'%pm)
         plt.title(mod_id)
