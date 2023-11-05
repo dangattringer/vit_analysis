@@ -139,14 +139,13 @@ def gen_args(model, arch, *, patch=16, imsize=224, nocache=False, overcache=Fals
 def start_analysis(model, arch, btn, root, img_filename=None):
     if btn >= 1 and model and arch:
         args = gen_args(model, arch, root=root, img_filename=img_filename)
-
-        if not check_exists(args, img_filename):
+        if root == "assets" or (img_filename and not check_exists(args, img_filename)):
             export_attention_maps(args=args, just_cls=True)
             make_attention_grids(args, just_cls=True)
             return html.P("Analysis Completed",
                           className='mt-2 text-center'), dash.no_update
         else:
-            return html.P("Exisiting Analysis Found",
+            return html.P("Found Exisiting Analysis (Cached)",
                           className='mt-2 text-center'), dash.no_update
 
     else:
