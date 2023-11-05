@@ -74,7 +74,10 @@ def check_exists(args, img_filename):
     mod_wrap = get_model_wrapper(
         args.meta_model, args.arch, args.patch, args.imsize, 'attn')
     mod_id = mod_wrap.mod_id
-    out = osp.join(args.vis_out, mod_id, img_filename)
+    if not img_filename:
+        out = osp.join(args.vis_out, mod_id, "head-v-pos")
+    else:
+        out = osp.join(args.vis_out, mod_id, img_filename)
     return osp.exists(out)
 
 
@@ -139,15 +142,14 @@ def gen_args(model, arch, *, patch=16, imsize=224, nocache=False, overcache=Fals
 def start_analysis(model, arch, btn, root, img_filename=None):
     if btn >= 1 and model and arch:
         args = gen_args(model, arch, root=root, img_filename=img_filename)
-        if root == "assets" or (img_filename and not check_exists(args, img_filename)):
-            export_attention_maps(args=args, just_cls=True)
-            make_attention_grids(args, just_cls=True)
-            return html.P("Analysis Completed",
-                          className='mt-2 text-center'), dash.no_update
+        if (root == "assets" or img_filename) and not check_exists(args, img_filename):
+                export_attention_maps(args=args, just_cls=True)
+                make_attention_grids(args, just_cls=True)
+                return html.P("Analysis Completed",
+                            className='mt-2 text-center'), dash.no_update, 0
         else:
-            return html.P("Found Exisiting Analysis (Cached)",
-                          className='mt-2 text-center'), dash.no_update
-
+            return html.P("Found Exisiting Analysis (cached)",
+                          className='mt-2 text-center'), dash.no_update, 0
     else:
         return dash.no_update
 

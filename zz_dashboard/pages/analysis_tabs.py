@@ -40,6 +40,7 @@ def update_selected_parameters_ana_t1(model, arch, state):
 @callback(
     Output('start-analysis-t1', 'children'),
     Output("ls-loading-output-t1", "children"),
+    Output("start-button-t1", "n_clicks"),
     [Input('model-select-ana-t1', 'value'),
      Input('arch-select-ana-t1', 'value'),
      Input('start-button-t1', 'n_clicks')
@@ -121,6 +122,7 @@ def update_selected_parameters_ana_t2(model, arch, state):
 @callback(
     Output('start-analysis-t2', 'children'),
     Output("ls-loading-output-t2", "children"),
+    Output("start-button-t2", "n_clicks"),
     [Input('model-select-ana-t2', 'value'),
      Input('arch-select-ana-t2', 'value'),
      Input('start-button-t2', 'n_clicks'),
