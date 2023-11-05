@@ -73,6 +73,12 @@ python app.py [--host HOST] [-- port PORT] [--debug]
 
 This will launch a dashboard, the default host is 127.0.0.1, and the default port is 8050.
 
+### Download MAE-CT
+
+If not already done, clone the [repo](https://github.com/ml-jku/mae-ct) to the root dir and download the weights from [here](https://github.com/ml-jku/mae-ct#pretrained-checkpoints) and save them here:  
+
+- repo_root/models/[model_name]'. e.g: '/vit_analysis/models/mae'
+
 ## Datasets
 
 The following datasets are used in this analysis: ImageNet, ImageNet-50 (sub-sampling of ImageNet), PartImageNet, COCO, ROxford5k, RParis6k, DAVIS, SPair-71k. These datasets should be placed in the data/ folder in the root directory. Alternately, when calling an analysis script you can specify a different path to each dataset using the --dataroot flag.
