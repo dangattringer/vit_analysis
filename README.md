@@ -56,7 +56,22 @@ cd ../..
 
 For TIMM (Fully Supervised), CLIP, and DINO, models are downloaded automatically when called
 
+## Dashboard
 
+Install additional packages:
+```
+pip install dash
+pip install dash-bootstrap-components
+pip install dash-daq
+```
+
+Run dashboard:
+```
+cd zz_dashboard
+python app.py [--host HOST] [-- port PORT] [--debug]
+```
+
+This will launch a dashboard, the default host is 127.0.0.1, and the default port is 8050.
 
 ## Datasets
 
