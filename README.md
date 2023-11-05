@@ -76,7 +76,7 @@ Download the **MAE Models weights** if not already done (see above).
 
 If not already done, clone this repo:
 ```bash
-git clone https://github.com/ml-jku/mae-ct
+git clone https://github.com/ml-jku/MAE-CT.git
 ``` 
 to the root dir and download the weights from [here](https://github.com/ml-jku/mae-ct#pretrained-checkpoints) and save them here:  
 
