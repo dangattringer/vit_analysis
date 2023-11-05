@@ -1,12 +1,13 @@
+import torch
 import dash
 import dash_bootstrap_components as dbc
 from dash import callback, dcc, html
 from dash.dependencies import Input, Output, State
-from lib.params import MODELS_DICT
 from lib.utils import parse_contents, save_file
 
 from .utils import (start_analysis, gen_model_arch_selection,
                     gen_selected_param_output, update_selected_parameters)
+
 
 tab_1 = [
     dbc.Row([
@@ -50,6 +51,7 @@ def update_selected_parameters_ana_t1(model, arch, state):
     ],
 )
 def start_analysis_t1(model, arch, btn):
+    torch.cuda.empty_cache()
     return start_analysis(model=model, arch=arch, btn=btn, root="assets")
 
 
@@ -133,4 +135,5 @@ def update_selected_parameters_ana_t2(model, arch, state):
     ],
 )
 def start_analysis_t2(model, arch, btn, img_filename):
+    torch.cuda.empty_cache()
     return start_analysis(model=model, arch=arch, btn=btn, root="upload", img_filename=img_filename)
