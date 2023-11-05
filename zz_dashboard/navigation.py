@@ -1,0 +1,26 @@
+import dash_bootstrap_components as dbc
+
+navigation_bar = dbc.NavbarSimple([
+    dbc.NavLink('About This App',
+                href='/',
+                active='exact',
+                id='about-navlink'),
+    dbc.NavLink("Analysis",
+                href="/analysis",
+                active='exact',
+                id='analysis-navlink'),
+    dbc.NavLink("Dashboard",
+                href="/dashboard",
+                active='exact',
+                id='dashboard-navlink'),
+    dbc.NavLink("Summary",
+                href="/summary",
+                active='exact',
+                id='Summary-navlink'),
+],
+    brand='Teaching Matters',
+    brand_href='/',
+    dark=True,
+    color='primary',
+    className='py-lg-0',
+)
