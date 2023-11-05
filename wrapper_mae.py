@@ -8,17 +8,19 @@ https://github.com/facebookresearch/mae
 Written by: Matthew Walmer
 ###########################################################################
 """
+import os.path as osp
 import sys
 
 import torch
 from torchvision import transforms as pth_transforms
 
-from meta_utils.feature_extractor import FeatureExtractor
 from meta_utils.block_mapper import block_mapper
+from meta_utils.feature_extractor import FeatureExtractor
 from meta_utils.preproc import standard_transform
-sys.path.append('mae/')
-import models_mae
 
+path_dir = osp.dirname(__file__)
+sys.path.append(osp.join(path_dir, "mae"))
+import models_mae
 
 
 class MAE_Wrapper:
@@ -31,20 +33,24 @@ class MAE_Wrapper:
         self.patch = patch
         self.imsize = imsize
         self.extract_mode = extract_mode
-        self.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+        self.device = torch.device(
+            "cuda") if torch.cuda.is_available() else torch.device("cpu")
         # create model identifier and test configuration
         if imsize != 224:
             print('ERROR: Required imsize for MAE is 224')
             exit(-1)
-        self.mod_id = 'MAE-ViT-%s-%i-%i'%(arch, patch, imsize)
+        self.mod_id = 'MAE-ViT-%s-%i-%i' % (arch, patch, imsize)
         if self.mod_id == 'MAE-ViT-B-16-224':
-            self.checkpoint_file = 'models/mae/mae_pretrain_vit_base.pth'
+            self.checkpoint_file = osp.join(
+                path_dir, 'models', 'mae', 'mae_pretrain_vit_base.pth')
             self.arch = 'mae_vit_base_patch16'
         elif self.mod_id == 'MAE-ViT-L-16-224':
-            self.checkpoint_file = 'models/mae/mae_pretrain_vit_large.pth'
+            self.checkpoint_file = osp.join(
+                path_dir, 'models', 'mae', 'mae_pretrain_vit_large.pth')
             self.arch = 'mae_vit_large_patch16'
         elif self.mod_id == 'MAE-ViT-H-14-224':
-            self.checkpoint_file = 'models/mae/mae_pretrain_vit_huge.pth'
+            self.checkpoint_file = osp.join(
+                path_dir, 'models', 'mae', 'mae_pretrain_vit_huge.pth')
             self.arch = 'mae_vit_huge_patch14'
         else:
             print('ERROR: Invalid MAE config')
@@ -54,7 +60,6 @@ class MAE_Wrapper:
         # handle block selection
         self.blk_sel = blk_sel
         self.blk_idxs = block_mapper(arch, blk_sel)
-
 
     def load(self):
         # build model
@@ -76,7 +81,7 @@ class MAE_Wrapper:
                 layers.append(self.model.blocks[idx])
         self.extractor = FeatureExtractor(self.model, layers)
 
-
     def get_activations(self, x):
-        acts = self.extractor(x.to(self.device), mask_ratio=0.0, no_shuffle=True)
+        acts = self.extractor(
+            x.to(self.device), mask_ratio=0.0, no_shuffle=True)
         return acts

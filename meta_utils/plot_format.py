@@ -265,6 +265,15 @@ SIMPLE_COLORS = {
     'MAE-ViT-B-16-224'    : 'blue',
     'MAE-ViT-L-16-224'    : 'mediumblue',
     'MAE-ViT-H-14-224'    : 'darkblue',
+    'MAE-CT-B-16-224'    : 'blue',
+    'MAE-CT-L-16-224'    : 'mediumblue',
+    'MAE-CT-H-16-224'    : 'darkblue',
+    'MAE-CT-AUG-B-16-224'    : 'blue',
+    'MAE-CT-AUG-L-16-224'    : 'mediumblue',
+    'MAE-CT-AUG-H-16-224'    : 'darkblue',
+    'MAE-CT-REIMPL-B-16-224'    : 'blue',
+    'MAE-CT-REIMPL-L-16-224'    : 'mediumblue',
+    'MAE-CT-REIMPL-H-16-224'    : 'darkblue',
     'BEIT-ViT-B-16-224'   : 'darkturquoise',
     'BEIT-ViT-L-16-224'   : 'darkcyan',
     'RANDOM-ViT-B-16-224' : 'magenta',
@@ -289,6 +298,9 @@ POOLED_METHODS = {
     'DINO': 'darkgreen',
     'MOCO': 'limegreen',
     'MAE': 'blue',
+    'MAE-CT': 'seagreen',
+    'MAE-CT-AUG': 'darkgoldenrod',
+    'MAE-REIMPL': 'lightcoral',
     'BEIT': 'darkturquoise',
     'RANDOM': 'magenta',
 }
@@ -304,19 +316,38 @@ SIMPLE_MARKERS = {
     'BEIT': 'o',
     'CLIP': 'D',
     'DINO': '^',
-    'MAE': 'h',
+    'MAE': 'x',
+    'MAE-CT': 'd',
+    'MAE-CT-AUG': 'p',
+    'MAE-REIMPL': '*',
+    'TIMM': 's',
+    'MOCO': 'v',
+    'RANDOM': '',
+}
+
+DASHBOARD_MARKERS = {
+    'BEIT': 'o',
+    'CLIP': 'D',
+    'DINO': '^',
+    'MAE': 'x',
+    'MAE-CT': 'star-diamond',
+    'MAE-CT-AUG': 'diamond-tall',
+    'MAE-REIMPL': 'hexagram',
     'TIMM': 's',
     'MOCO': 'v',
     'RANDOM': '',
 }
 # note - runs using dense extractor mode append '-dense' to
 # the end of the mod_id. This suffix is ignored
-def get_line_fmt(mod_id, reduce_sat=0.75):
+def get_line_fmt(mod_id, reduce_sat=0.75, px=False):
     if '-dense' in mod_id:
         mod_id = mod_id.replace('-dense','')
     if mod_id in POOLED_METHODS:
         c = POOLED_METHODS[mod_id]
-        m = SIMPLE_MARKERS[mod_id]
+        if px:
+            m = DASHBOARD_MARKERS[mod_id]
+        else:
+            m = SIMPLE_MARKERS[mod_id]
         l = 'solid'
     else:
         m = ''
@@ -368,6 +399,9 @@ MOD_ID_ORDER = [
     'DINO-ViT-S-16-224', 'DINO-ViT-S-8-224', 'DINO-ViT-B-16-224', 'DINO-ViT-B-8-224',
     'MOCO-ViT-S-16-224', 'MOCO-ViT-B-16-224', 
     'MAE-ViT-B-16-224', 'MAE-ViT-L-16-224', 'MAE-ViT-H-14-224',
+    'MAE-CT-AUG-B-16-224', #'MAE-CT-AUG-L-16-224', 'MAE-CT-AUG-L-16-224', 
+    'MAE-CT-B-16-224',  #'MAE-CT-L-16-224', 'MAE-CT-H-16-224', 
+    'MAE-REIMPL-B-16-224', #'MAE-REIMPL-L-16-224', 'MAE-REIMPL-H-16-224', 
     'BEIT-ViT-B-16-224', 'BEIT-ViT-L-16-224',
     'RANDOM-ViT-B-16-224'
 ]

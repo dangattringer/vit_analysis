@@ -8,6 +8,15 @@ def get_model_wrapper(meta_model, arch, patch, imsize, extract_mode='both', blk_
     if meta_model == 'mae':
         from wrapper_mae import MAE_Wrapper
         return MAE_Wrapper(arch, patch, imsize, extract_mode, blk_sel)
+    if meta_model == 'mae_ct':
+        from wrapper_mae_ct import MAE_CT_Wrapper
+        return MAE_CT_Wrapper(arch, patch, imsize, extract_mode, blk_sel)
+    if meta_model == 'mae_ct_aug':
+        from wrapper_mae_ct_aug import MAE_CT_AUG_Wrapper
+        return MAE_CT_AUG_Wrapper(arch, patch, imsize, extract_mode, blk_sel)
+    if meta_model == 'mae_reimpl':
+        from wrapper_mae_reimpl import MAE_REIMPL_Wrapper
+        return MAE_REIMPL_Wrapper(arch, patch, imsize, extract_mode, blk_sel)
     if meta_model == 'timm':
         from wrapper_timm import TIMM_Wrapper
         return TIMM_Wrapper(arch, patch, imsize, extract_mode, blk_sel)
