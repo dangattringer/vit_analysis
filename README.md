@@ -74,9 +74,13 @@ Download the **MAE Models weights** if not already done (see above).
 
 **Download MAE-CT**
 
-If not already done, clone the [repo](https://github.com/ml-jku/mae-ct) to the root dir and download the weights from [here](https://github.com/ml-jku/mae-ct#pretrained-checkpoints) and save them here:  
+If not already done, clone this repo:
+```bash
+git clone https://github.com/ml-jku/mae-ct
+``` 
+to the root dir and download the weights from [here](https://github.com/ml-jku/mae-ct#pretrained-checkpoints) and save them here:  
 
-repo_root/models/[model_name], e.g: /vit_analysis/models/mae
+repo_root/models/[model_name], e.g: repo_root/models/mae_ct
 
 You can also download the weights directly from the command line:
 ``` bash
